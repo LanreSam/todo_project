@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
-  "type": "module",
   "scripts": {
+    "migrate": "npx knex migrate:latest --knexfile ./models/knexfile.js",
     "start": "nodemon app.js"
   },
   "repository": {
@@ -24,6 +24,7 @@
     "joi": "^17.6.0",
     "knex": "^2.2.0",
     "mysql": "^2.18.1",
+    "mysql2": "^2.3.3",
     "objection": "^3.0.1"
   },
   "devDependencies": {
