@@ -1,6 +1,6 @@
 const express = require("express");
 var mysql = require('mysql2');
-const userRoute = require("./routes/v1/users.js");
+const userRoute = require("./routes/v1/accounts.js");
 
 const app = express();
 const PORT = 5000
