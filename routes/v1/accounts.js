@@ -1,13 +1,12 @@
 const express = require('express');
 const router = express.Router();
+// const knex = require('knex')['../../models/knexfile']
+
 const { 
-    test,
-    test2
+    createAccount,
 } = require("../../controllers/userControllers.js");
 
-
-router.get('/v1/test', test);
-router.get('/v1/test2', test2);
+router.post('/v1/createAccount', createAccount);
 
 
 module.exports =  router;
