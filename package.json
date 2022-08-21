@@ -5,6 +5,7 @@
   "main": "app.js",
   "scripts": {
     "migrate": "npx knex migrate:latest --knexfile ./models/knexfile.js",
+    "down": "npx knex migrate:down --knexfile ./models/knexfile.js",
     "start": "nodemon app.js"
   },
   "repository": {

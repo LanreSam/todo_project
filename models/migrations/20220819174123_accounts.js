@@ -21,11 +21,10 @@
         table.date('date_of_birth').notNullable();
         table.string('gender', 10);
         table.string('role', 100);
-        table.string('email', 100).unique().notNullable();
+        table.string('email', 100).notNullable();
         table.string('phone_number', 11);
         table.string('password', 100);
-        table.timestamp('created_on').defaultTo(knex.fn.now());
-        table.timestamp('modified_on').defaultTo(knex.fn.now());
+        table.timestamps(true, true, true)
         table.boolean('is_deleted');
     });
     await knex.schema.createTable('activity_logs', table => {
