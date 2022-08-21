@@ -24,31 +24,28 @@
         table.string('email', 100).notNullable();
         table.string('phone_number', 11);
         table.string('password', 100);
-        table.timestamps(true, true, true)
+        table.timestamps(true, true, true);
         table.boolean('is_deleted');
     });
     await knex.schema.createTable('activity_logs', table => {
       table.increments();
       table.integer('user_id').references('id').inTable('users').unsigned().notNullable();
       table.text('logs');
-      table.timestamp('created_on').defaultTo(knex.fn.now());
-      table.timestamp('modified_on').defaultTo(knex.fn.now());
+      table.timestamps(true, true, true);
       table.boolean('is_deleted');
     });
     await knex.schema.createTable('security_settings', table => {
       table.increments();
       table.text('json_rule');
       table.integer('user_id').references('id').inTable('users').unsigned().notNullable();
-      table.timestamp('created_on').defaultTo(knex.fn.now());
-      table.timestamp('modified_on').defaultTo(knex.fn.now());
+      table.timestamps(true, true, true);
       table.boolean('is_deleted');
     });
     await knex.schema.createTable('projects', table => {
       table.increments();
       table.integer('user_id').references('id').inTable('users').unsigned().notNullable();
       table.string('project_name', 255).notNullable();
-      table.timestamp('created_on').defaultTo(knex.fn.now());
-      table.timestamp('modified_on').defaultTo(knex.fn.now());
+      table.timestamps(true, true, true);
       table.boolean('is_deleted');
     });
     await knex.schema.createTable('sections', table => {
@@ -56,8 +53,7 @@
       table.string('name', 255).notNullable();
       table.string('description', 255);
       table.integer('project_id').references('id').inTable('projects').unsigned().notNullable();
-      table.timestamp('created_on').defaultTo(knex.fn.now());
-      table.timestamp('modified_on').defaultTo(knex.fn.now());
+      table.timestamps(true, true, true);
       table.boolean('is_deleted');
     })
     await knex.schema.createTable('tasks', table => {
@@ -65,8 +61,7 @@
       table.text('task_name').notNullable();
       table.timestamp('due_date');
       table.integer('section_id').references('id').inTable('sections').unsigned().notNullable();    
-      table.timestamp('created_on').defaultTo(knex.fn.now());
-      table.timestamp('modified_on').defaultTo(knex.fn.now());
+      table.timestamps(true, true, true);
       table.boolean('is_deleted');
       table.boo
     });

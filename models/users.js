@@ -28,11 +28,14 @@ class Users extends Model {
     static get phone_numberColumn() {
         return 'phone_number';
     }
+    static get passwordColumn() {
+        return 'password';
+    }
 
     static get jsonSchema(){
         return {
             type: 'object',
-            required: ['full_name', 'date_of_birth', 'gender', 'role', 'email', 'phone_number'],
+            required: ['full_name', 'date_of_birth', 'gender', 'role', 'email', 'phone_number', 'password'],
             properties: {
                 id: { type: 'integer' },
                 full_name: { type: 'string', minLength: 1, maxLength: 255 },
@@ -40,7 +43,8 @@ class Users extends Model {
                 gender: { type: 'string', minLength: 1, maxLength: 10 },
                 role: { type: 'string', minLength: 5, maxLength: 100 },
                 email: { type: 'string', pattern: "^\\S+@\\S+\\.\\S+$",minLength: 6, maxLength: 100 },
-                phone_number: { type: 'string', minLength: 11, maxLength: 11 }
+                phone_number: { type: 'string', minLength: 11, maxLength: 11 },
+                password: {type: "string", minLength:8, maxLength: 100}
             }
         }
     } 

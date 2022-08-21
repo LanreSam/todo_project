@@ -1,22 +1,48 @@
-const { raw } = require('body-parser');
 const Users = require('../models/users.js');
-
+const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken');
 
 // This is the create account endpoint || CREATE
 const createAccount = async (req, res, next) => {
-    await Users.query().insert({
-        full_name: req.body.full_name,
-        date_of_birth: req.body.date_of_birth,
-        gender: req.body.gender,
-        role: req.body.role,
-        email: req.body.email,
-        phone_number: req.body.phone_number,
-        password: req.body.password
-    }).then(() => {
+    try {
+        const email = req.body.email;
+
+        // Validate if user exist in our database
+        const oldUser = await Users.query().findOne({ email });
+    
+        if (oldUser) {
+          return res.status(409).send("User Already Exist. Please Login");
+        }
+    
+        //Encrypt user password
+        password = req.body.password
+        encryptedPassword = await bcrypt.hash(password, 10);
+    
+        const user = await Users.query().insert({
+            full_name: req.body.full_name,
+            date_of_birth: req.body.date_of_birth,
+            gender: req.body.gender,
+            role: req.body.role,
+            email: email,
+            phone_number: req.body.phone_number,
+            password: encryptedPassword
+        });
+
+        // Create token
+        const token = jwt.sign(
+            { user_id: Users._id, email },
+            "pass1234",
+            {
+              expiresIn: "2h",
+            }
+        );
+    
+        // save user token
+        Users.token = token;
         res.status(200).json({message: `Added ${req.body.full_name} to the DB`, error: "null"});
-    }).catch((err) => {
+    } catch (err) {
         res.status(500).json({message: err.toString()});
-    });
+    }
     
     next();
 };
