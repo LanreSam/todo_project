@@ -1,3 +1,4 @@
+const { raw } = require('body-parser');
 const Users = require('../models/users.js');
 
 
@@ -20,7 +21,7 @@ const createAccount = async (req, res, next) => {
     next();
 };
 
-//Gets all users from the DB || I still need to work more on this || READ
+//Gets all users from the DB || READ
 const getAccounts = async (req, res, next) => {
     try {
         const getAllUsers = await Users.query();
@@ -32,22 +33,44 @@ const getAccounts = async (req, res, next) => {
     next()
 };
 
-// Update the user's account
+// Get a single user
+const getUser = async (req, res, next) => {
+    try {
+        const userId = req.params.id;
+        const findUser = await Users.query().findById(userId)
+
+        //Checks if the user exists in the DB
+        if (!findUser) {
+            return res.status(500).json({status: 500, message: 'User does not exist'})
+        };
+
+        res.send(findUser)
+        console.log(findUser)
+    } catch (err) {
+        res.status(500).json({message: "Error finding user", error: err});
+    }
+
+    next();
+}
+
+// Update the user's account || UPDATE
 const updateAccount = async (req, res, next) => {
     const userId = req.params.id;
     const changes = req.body;
-    const update = knex('users').where('id', userId).update(changes);
+    const update = Users.query().where('id', userId).update(changes);
     await update.then(() => {
-        res.status(200).json({message: `${req.body.full_name} has been updated`, error: "null"});
+        res.status(200).json({message: `User with id:${userId} has been updated`, error: "null"});
     }).catch((err) => {
         res.status(500).json({message: "Error updating account", error: err});
     })
+
+    next();
 };
 
-// This is the delete account function
+// This is the delete account function || DELETE
 const deleteAccount = async (req, res, next) => {
-    userId = req.params.id;
-    await knex('users').where('id', userId).del().then(() => {
+    userId = await req.params.id;
+    await Users.query().delete().where('id', userId).then(() => {
         res.status(200).json({message: "Account deleted", error: "null"});
     }).catch((err) => {
         res.status(500).json({message: err.toString()});
@@ -61,5 +84,6 @@ module.exports = {
     createAccount,
     deleteAccount,
     getAccounts,
+    getUser,
     updateAccount,
 };
