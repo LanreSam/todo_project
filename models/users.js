@@ -6,6 +6,7 @@ const knex = require("knex")(knexfile);
 // Feeds knex to Objection.
 Model.knex(knex);
 
+const activity_logs = require('./activity_logs');
 class Users extends Model {
     static get tableName(){
         return 'users';
@@ -47,7 +48,18 @@ class Users extends Model {
                 password: {type: "string", minLength:8, maxLength: 100}
             }
         }
-    } 
+    }; 
+
+    static relationMappings = {
+        logs: {
+            relation: Model.HasManyRelation,
+            modelClass: activity_logs,
+            join: {
+                from: 'users.id',
+                to: 'activity_logs.user_id'
+            }
+        }
+    }
 };
 
 module.exports = Users;

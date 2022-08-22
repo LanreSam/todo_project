@@ -11,7 +11,8 @@ const createAccount = async (req, res, next) => {
         const oldUser = await Users.query().findOne({ email });
     
         if (oldUser) {
-          return res.status(409).send("User Already Exist. Please Login");
+          return res.status(409).send("User Already Exist. Please Login")
+          // return res.redirect('http://localhost:5000/api/v1/login');
         }
     
         //Encrypt user password
@@ -31,21 +32,56 @@ const createAccount = async (req, res, next) => {
         // Create token
         const token = jwt.sign(
             { user_id: Users._id, email },
-            "pass1234",
+            process.env.TOKEN_KEY,
             {
               expiresIn: "2h",
             }
         );
     
         // save user token
-        Users.token = token;
-        res.status(200).json({message: `Added ${req.body.full_name} to the DB`, error: "null"});
+        user.token = token;
+        res.status(200).json({message: `Added ${email} to the DB`, error: "null"});
     } catch (err) {
         res.status(500).json({message: err.toString()});
     }
     
     next();
 };
+
+// login controller for users
+const login = async (req, res, next) => {
+    try {
+        // Get user input
+        const { email, password } = req.body;
+
+        // Validate user input
+        if (!(email && password)) {
+            res.status(400).send("All input is required");
+        }
+        // Validate if user exist in our database
+        const user = await Users.query().findOne({ email });
+
+        if (user && (await bcrypt.compare(password, user.password))) {
+            // Create token
+            const token = jwt.sign(
+                { user_id: user._id, email },
+                process.env.TOKEN_KEY,
+                {
+                    expiresIn: "2h",
+                }
+            );
+
+            // save user token
+            user.token = token;
+
+            // user
+            res.status(200).json(user);
+        }
+        res.status(400).send("Invalid Credentials");
+    } catch (err) {
+        res.status(500).json({message: err.toString()});
+    }
+}
 
 //Gets all users from the DB || READ
 const getAccounts = async (req, res, next) => {
@@ -108,6 +144,7 @@ const deleteAccount = async (req, res, next) => {
 // Exports all the functions fro use in another file
 module.exports = {
     createAccount,
+    login,
     deleteAccount,
     getAccounts,
     getUser,
