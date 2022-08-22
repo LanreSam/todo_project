@@ -1,6 +1,8 @@
 const express = require("express");
 const bodyParser = require('body-parser');
 const userRoute = require("./routes/v1/accounts.js");
+const authUser= require('./routes/v1/auth.js')
+
 
 const app = express();
 const PORT = 5000
@@ -10,6 +12,8 @@ app.use(bodyParser.json());
 
 // Default route
 app.use('/api', userRoute);
+app.use('/api', authUser);
+
 
 //default route // TEST
 app.post('/test', (req, res, next) => {
@@ -31,7 +35,7 @@ app.post('/test', (req, res, next) => {
     }
 
     next();
-  });
+});
 
 app.listen(PORT, () => {
     console.log(`Server is listening to ${PORT}`);
