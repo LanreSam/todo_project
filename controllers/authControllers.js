@@ -17,8 +17,9 @@ const login = async (req, res, next) => {
 
         if (user && (await bcrypt.compare(password, user.password))) {
             // Create token
+            delete user.password;
             const token = jwt.sign(
-                { user_id: user._id, email },
+                { user },
                 process.env.TOKEN_KEY,
                 {
                     expiresIn: "2h",
@@ -29,12 +30,18 @@ const login = async (req, res, next) => {
             user.token = token;
 
             // user
-            res.status(200).json(user);
+            res.status(200).json(user.full_name);
+            res.end();
         }
-        res.status(400).send("Invalid Credentials");
+        else{
+            res.status(400).send("Invalid Credentials");
+        }
     } catch (err) {
-        res.status(500).json({message: err.toString()});
+        res.status(500).send({message: "Error occured"});
+        console.log(err);
     }
+
+    // next();
 }
 
 module.exports = { login }

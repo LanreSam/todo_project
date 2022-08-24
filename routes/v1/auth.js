@@ -6,6 +6,6 @@ require("dotenv").config();
 const { login } = require('../../controllers/authControllers.js')
 
 
-router.post('/v1/auths', auth, login)
+router.post('/v1/auths', login)
 
 module.exports = router;
