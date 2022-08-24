@@ -1,5 +1,5 @@
 const Users = require('../models/users.js');
-const bcrypt = require('bcryptjs')
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 // login controller for users

@@ -1,37 +1,50 @@
 const Users = require('../models/users.js');
-const bcrypt = require('bcryptjs')
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const schemaValidation = require('../utils/schemaValidation.js');
 
 // This is the create account endpoint || CREATE
 const createAccount = async (req, res, next) => {
     try {
-        const email = req.body.email;
-
+        const data = req.body;
+        
         // Validate if user exist in our database
+        const email = data.email;
         const oldUser = await Users.query().findOne({ email });
     
         if (oldUser) {
           return res.status(409).send("User Already Exist. Please Login")
           // return res.redirect('http://localhost:5000/api/v1/login');
+        }else{
+            try {
+                const Validation = schemaValidation.validate(data);
+                if (Validation.error) {
+                    return res.send(Validation.error.details[0].message);
+                }
+                console.log(Validation);
+            } catch (err) {
+                console.log(err);
+                await res.status(500).json({message: err.toString()});
+            }
         }
-    
+
         //Encrypt user password
-        password = req.body.password
-        encryptedPassword = await bcrypt.hash(password, 10);
-    
+        const password = data.password;
+        const encryptedPassword = await bcrypt.hash(password, 10);
+        
         const user = await Users.query().insert({
-            full_name: req.body.full_name,
-            date_of_birth: req.body.date_of_birth,
-            gender: req.body.gender,
-            role: req.body.role,
+            full_name: data.full_name,
+            date_of_birth: data.date_of_birth,
+            gender: data.gender,
+            role: data.role,
             email: email,
-            phone_number: req.body.phone_number,
+            phone_number: data.phone_number,
             password: encryptedPassword
         });
 
         // Create token
         const token = jwt.sign(
-            { user_id: Users._id, email },
+            { user_id: user._id, email },
             process.env.TOKEN_KEY,
             {
               expiresIn: "2h",
@@ -44,8 +57,6 @@ const createAccount = async (req, res, next) => {
     } catch (err) {
         res.status(500).json({message: err.toString()});
     }
-    
-    next();
 };
 
 //Gets all users from the DB || READ
@@ -56,8 +67,6 @@ const getAccounts = async (req, res, next) => {
     } catch (err) {
         res.status(500).json({message: "Error fetching accounts", error: err});
     }
-
-    next()
 };
 
 // Get a single user
