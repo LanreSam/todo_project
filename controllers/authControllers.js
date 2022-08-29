@@ -1,12 +1,17 @@
 const Users = require('../models/users.js');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const inputValidation = require('../utils/inputValidation.js');
 
 // login controller for users
 const login = async (req, res, next) => {
     try {
         // Get user input
-        const { email, password } = req.body;
+        const data = req.body
+        const { email, password } = data;
+        
+        //Validate users' input against the schema
+        inputValidation
 
         // Validate user input
         if (!(email && password)) {
@@ -28,16 +33,17 @@ const login = async (req, res, next) => {
 
             // save user token
             user.token = token;
+            console.log(token);
 
             // user
-            res.status(200).json(user.full_name);
+            await res.status(200).json(user.full_name);
             res.end();
         }
         else{
-            res.status(400).send("Invalid Credentials");
+            await res.status(400).send("Invalid Credentials");
         }
     } catch (err) {
-        res.status(500).send({message: "Error occured"});
+        await res.status(500).send({message: "Error occured"});
         console.log(err);
     }
 

@@ -1,10 +1,11 @@
 const jwt = require("jsonwebtoken");
 
+
 const config = process.env;
 
 const verifyToken = async (req, res, next) => {
-  console.log(JSON.stringify(req.headers.authorization));
-  const token = req.headers.authorization.split(" ")[1];
+  // console.log(JSON.stringify(req.headers.authorization));
+  const token = await req.headers.authorization.split(" ")[1];
   console.log(token);
 
   if (!token) {
@@ -21,4 +22,6 @@ const verifyToken = async (req, res, next) => {
   next();
 };
 
-module.exports = verifyToken
+module.exports = { 
+  verifyToken
+}
